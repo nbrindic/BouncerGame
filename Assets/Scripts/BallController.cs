@@ -30,7 +30,6 @@ public class BallController : MonoBehaviour
     {
         if (force > 0)
         {
-            Debug.Log("Should receive force: " + force + " in direction: " + direction);
             _currentForce = force / 2.5f;
             _currentDirection = direction;
 
