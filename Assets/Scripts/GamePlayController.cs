@@ -11,7 +11,6 @@ public class GamePlayController : MonoBehaviour
     public Transform BallSpawnPoint;
     public FinishController FinishController;
 
-    public event Action OnSessionStart;
     public event Action OnCompleted;
     public event Action OnGameOver;
 
@@ -31,21 +30,19 @@ public class GamePlayController : MonoBehaviour
         _sessionTimeElapsed = 0f;
         TimeElapsedLabel.text = _sessionTimeElapsed.ToString("N2");
         _isPlaying = true;
-
-        OnSessionStart();
     }
 
     private void _ballInstance_OnHitDeadWall()
     {
         _ballInstance.OnHitDeadWall -= _ballInstance_OnHitDeadWall;
-        OnGameOver();
-
-        Debug.Log("Ball should be destroyed here...");
+        _isPlaying = false;
+        Destroy(_ballInstance.gameObject);
+        OnGameOver();        
     }
 
     private void FinishController_OnFinishReached()
     {
-        Debug.Log("Finish reached");
+        _isPlaying = false;
         OnCompleted();
     }
 
@@ -55,6 +52,11 @@ public class GamePlayController : MonoBehaviour
         {
             _sessionTimeElapsed += Time.deltaTime;
             TimeElapsedLabel.text = _sessionTimeElapsed.ToString("N2");
+
+            if (Input.GetKeyUp(KeyCode.Q))
+                FinishController_OnFinishReached();
+            if (Input.GetKeyUp(KeyCode.W))
+                _ballInstance_OnHitDeadWall();
         }
     }
 }

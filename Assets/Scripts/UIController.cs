@@ -1,19 +1,23 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
     public GameObject TimerContainer;
     public Text TimeElapsedLabel;
+    public GameObject GameOverOverlay;
     public GameObject TapToPlayOverlay;
+    public GameObject CompletedOverlay;
     public GameObject TapToPlayLabel;
+    public GameObject TapToPlayAgainLabel;
+    public GameObject TapToPlayAgain2Label;
     public float TapToPlayLabelToggleTime;
     public CameraController Camera;
     public GamePlayController GameplayController;
 
     private void Awake()
     {
-        GameplayController.OnSessionStart += GameplayController_OnSessionStart;
         GameplayController.OnCompleted += GameplayController_OnCompleted;
         GameplayController.OnGameOver += GameplayController_OnGameOver;
         StartTogglingTapToPlay();
@@ -22,30 +26,29 @@ public class UIController : MonoBehaviour
     private void StartTogglingTapToPlay()
     {
         TapToPlayLabel.SetActive(!TapToPlayLabel.activeSelf);
+        TapToPlayAgainLabel.SetActive(!TapToPlayAgainLabel.activeSelf);
+        TapToPlayAgain2Label.SetActive(!TapToPlayAgain2Label.activeSelf);
         Invoke("StartTogglingTapToPlay", TapToPlayLabelToggleTime);
     }
 
     private void GameplayController_OnGameOver()
     {
         Camera.Orbit();
-        TapToPlayOverlay.SetActive(true);
-        TimerContainer.SetActive(false);
+        GameOverOverlay.SetActive(true);
     }
 
     private void GameplayController_OnCompleted()
     {
-        Debug.Log("Some UI to show here");
-    }
-
-    private void GameplayController_OnSessionStart()
-    {
-        Debug.Log("Whatever...");
+        Camera.Orbit();
+        CompletedOverlay.SetActive(true);
     }
 
     public void OnPlayTapped()
     {
         Camera.SetViewForGamePlay();
         TapToPlayOverlay.SetActive(false);
+        GameOverOverlay.SetActive(false);
+        CompletedOverlay.SetActive(false);
         TimerContainer.SetActive(true);
 
         GameplayController.StartPlaying();

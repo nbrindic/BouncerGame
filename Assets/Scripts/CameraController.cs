@@ -10,10 +10,12 @@ public class CameraController : MonoBehaviour
     private Vector3 _lookAtPoint;
     private bool _shouldOrbit;
     private Transform _transform;
+    private Vector3 _initialPosition;
 
     private void Awake()
     {
-        _transform = transform;        
+        _transform = transform;
+        _initialPosition = _transform.position;
     }
 
     private void Start()
