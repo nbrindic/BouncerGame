@@ -11,6 +11,7 @@ public class CameraController : MonoBehaviour
     private bool _shouldOrbit;
     private Transform _transform;
     private Vector3 _initialPosition;
+    private BallController _ballInstance;
 
     private void Awake()
     {
@@ -31,7 +32,10 @@ public class CameraController : MonoBehaviour
             _transform.RotateAround(_lookAtPoint, new Vector3(0.0f, 1.0f, 0.0f), 20 * Time.deltaTime * OrbitSpeed);
         else
         {
-            _transform.position = Vector3.Lerp(_transform.position, GamePlayPosition.transform.position, PositionSwitchSpeed * Time.deltaTime);
+            _transform.position = Vector3.Lerp(
+                _transform.position, 
+                new Vector3(_ballInstance.transform.position.x, GamePlayPosition.transform.position.y, GamePlayPosition.transform.position.z), 
+                PositionSwitchSpeed * Time.deltaTime);
             _transform.rotation = Quaternion.Lerp(_transform.rotation, GamePlayPosition.transform.rotation, PositionSwitchSpeed * Time.deltaTime);
         }
     }
@@ -41,8 +45,9 @@ public class CameraController : MonoBehaviour
         _shouldOrbit = true;
     }
 
-    public void SetViewForGamePlay()
+    public void SetViewForGamePlay(BallController ballInstance)
     {
+        _ballInstance = ballInstance;
         _shouldOrbit = false;
     }
 }

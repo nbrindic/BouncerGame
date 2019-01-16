@@ -6,6 +6,8 @@ public class UIController : MonoBehaviour
 {
     public GameObject TimerContainer;
     public Text TimeElapsedLabel;
+    public Text TimeElapsedGameOverLabel;
+    public Text TimeElapsedCompletedLabel;
     public GameObject GameOverOverlay;
     public GameObject TapToPlayOverlay;
     public GameObject CompletedOverlay;
@@ -34,18 +36,21 @@ public class UIController : MonoBehaviour
     private void GameplayController_OnGameOver()
     {
         Camera.Orbit();
+        TimerContainer.SetActive(false);
+        TimeElapsedGameOverLabel.text = "Your Time: " + GameplayController.SessionTimeElapsed.ToString("N2");
         GameOverOverlay.SetActive(true);
     }
 
     private void GameplayController_OnCompleted()
     {
         Camera.Orbit();
+        TimerContainer.SetActive(false);
+        TimeElapsedCompletedLabel.text = "Your Time: " + GameplayController.SessionTimeElapsed.ToString("N2");
         CompletedOverlay.SetActive(true);
     }
 
     public void OnPlayTapped()
     {
-        Camera.SetViewForGamePlay();
         TapToPlayOverlay.SetActive(false);
         GameOverOverlay.SetActive(false);
         CompletedOverlay.SetActive(false);

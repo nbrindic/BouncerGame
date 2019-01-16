@@ -10,14 +10,16 @@ public class GamePlayController : MonoBehaviour
     public GameObject BallPrefab;
     public Transform BallSpawnPoint;
     public FinishController FinishController;
+    public CameraController Camera;
+
+    [HideInInspector] public float SessionTimeElapsed;
 
     public event Action OnCompleted;
     public event Action OnGameOver;
 
     private BallController _ballInstance;
     private bool _isPlaying;
-    private float _sessionTimeElapsed;
-
+    
     private void Awake()
     {
         FinishController.OnFinishReached += FinishController_OnFinishReached;
@@ -27,8 +29,9 @@ public class GamePlayController : MonoBehaviour
     {
         _ballInstance = Instantiate(BallPrefab, BallSpawnPoint.position, Quaternion.identity, transform).GetComponent<BallController>();
         _ballInstance.OnHitDeadWall += _ballInstance_OnHitDeadWall;
-        _sessionTimeElapsed = 0f;
-        TimeElapsedLabel.text = _sessionTimeElapsed.ToString("N2");
+        Camera.SetViewForGamePlay(_ballInstance);
+        SessionTimeElapsed = 0f;
+        TimeElapsedLabel.text = SessionTimeElapsed.ToString("N2");
         _isPlaying = true;
     }
 
@@ -51,13 +54,8 @@ public class GamePlayController : MonoBehaviour
     {
         if (_isPlaying)
         {
-            _sessionTimeElapsed += Time.deltaTime;
-            TimeElapsedLabel.text = _sessionTimeElapsed.ToString("N2");
-
-            if (Input.GetKeyUp(KeyCode.Q))
-                FinishController_OnFinishReached();
-            if (Input.GetKeyUp(KeyCode.W))
-                _ballInstance_OnHitDeadWall();
+            SessionTimeElapsed += Time.deltaTime;
+            TimeElapsedLabel.text = SessionTimeElapsed.ToString("N2");
         }
     }
 }
