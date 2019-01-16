@@ -6,6 +6,8 @@ public class UIController : MonoBehaviour
     public GameObject TimerContainer;
     public Text TimeElapsedLabel;
     public GameObject TapToPlayOverlay;
+    public GameObject TapToPlayLabel;
+    public float TapToPlayLabelToggleTime;
     public CameraController Camera;
     public GamePlayController GameplayController;
 
@@ -14,7 +16,14 @@ public class UIController : MonoBehaviour
         GameplayController.OnSessionStart += GameplayController_OnSessionStart;
         GameplayController.OnCompleted += GameplayController_OnCompleted;
         GameplayController.OnGameOver += GameplayController_OnGameOver;
+        StartTogglingTapToPlay();
 	}
+
+    private void StartTogglingTapToPlay()
+    {
+        TapToPlayLabel.SetActive(!TapToPlayLabel.activeSelf);
+        Invoke("StartTogglingTapToPlay", TapToPlayLabelToggleTime);
+    }
 
     private void GameplayController_OnGameOver()
     {

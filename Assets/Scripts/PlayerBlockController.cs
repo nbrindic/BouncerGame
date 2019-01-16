@@ -9,14 +9,15 @@ public enum MoveDirection
     Down
 }
 
+[ExecuteInEditMode]
 public class PlayerBlockController : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     public float BackToIdleSpeed;
     public MoveDirection MoveDir;
     public float MoveStepSize;
     public float DragToForceFactor;
-
-    public float CurrentForce;
+    public Transform ArrowObject;
+    [HideInInspector] public float CurrentForce;
 
     private Transform _transform;
     private Vector3 _initialPosition;
@@ -25,7 +26,28 @@ public class PlayerBlockController : MonoBehaviour, IBeginDragHandler, IDragHand
     private void Awake()
     {
         _transform = transform;
-        _initialPosition = _transform.position;    
+        _initialPosition = _transform.position;
+        SetupArrow();
+    }
+
+    private void SetupArrow()
+    {
+        var arrowAngle = Vector3.zero;
+        switch (MoveDir)
+        {
+            case MoveDirection.Up:
+                arrowAngle = new Vector3(0f, -90f, 0f);
+                break;
+            case MoveDirection.Left:
+                arrowAngle = new Vector3(0f, 180f, 0f);
+                break;
+            case MoveDirection.Down:
+                arrowAngle = new Vector3(0f, 90f, 0f);
+                break;
+            default:
+                break;
+        }
+        ArrowObject.rotation = Quaternion.Euler(arrowAngle);
     }
 
     private void Update ()
