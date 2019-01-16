@@ -35,14 +35,15 @@ public class GamePlayController : MonoBehaviour
     private void _ballInstance_OnHitDeadWall()
     {
         _ballInstance.OnHitDeadWall -= _ballInstance_OnHitDeadWall;
-        _isPlaying = false;
         Destroy(_ballInstance.gameObject);
+        _isPlaying = false;
         OnGameOver();        
     }
 
     private void FinishController_OnFinishReached()
     {
         _isPlaying = false;
+        Destroy(_ballInstance.gameObject, 3f);
         OnCompleted();
     }
 
