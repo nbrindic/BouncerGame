@@ -22,29 +22,32 @@ public class PlayerBlockController : MonoBehaviour, IBeginDragHandler, IDragHand
     private Transform _transform;
     private Vector3 _initialPosition;
     private bool _isDragging;
+    private float _maxDisplacement;
 
     private void Awake()
     {
         _transform = transform;
         _initialPosition = _transform.position;
-        SetupArrow();
+        SetupArrowAndMaxDisplacement();
     }
 
-    private void SetupArrow()
+    private void SetupArrowAndMaxDisplacement()
     {
+        _maxDisplacement = 1f;
         var arrowAngle = Vector3.zero;
+        
         switch (MoveDir)
         {
             case MoveDirection.Up:
                 arrowAngle = new Vector3(0f, -90f, 0f);
+                break;            
+            case MoveDirection.Down:
+                arrowAngle = new Vector3(0f, 90f, 0f);
                 break;
             case MoveDirection.Left:
                 arrowAngle = new Vector3(0f, 180f, 0f);
                 break;
-            case MoveDirection.Down:
-                arrowAngle = new Vector3(0f, 90f, 0f);
-                break;
-            default:
+            case MoveDirection.Right:
                 break;
         }
         ArrowObject.rotation = Quaternion.Euler(arrowAngle);
@@ -70,34 +73,56 @@ public class PlayerBlockController : MonoBehaviour, IBeginDragHandler, IDragHand
     public void OnDrag(PointerEventData eventData)
     {
         var delta = eventData.delta;
+        var newAxisPosition = 0f;
+        var maxAxisPosition = 0f;
 
         switch (MoveDir)
         {
             case MoveDirection.Left:
                 if (delta.x < 0)
                 {
-                    _transform.position = new Vector3(_transform.position.x - delta.x * MoveStepSize, _transform.position.y, _transform.position.z);
+                    newAxisPosition = _transform.position.x - delta.x * MoveStepSize;
+                    maxAxisPosition = _initialPosition.x - _maxDisplacement;
+                    if (newAxisPosition < maxAxisPosition)
+                        newAxisPosition = maxAxisPosition;
+
+                    _transform.position = new Vector3(newAxisPosition, _transform.position.y, _transform.position.z);
                     CurrentForce = -delta.x * DragToForceFactor;
                 }
                 break;
             case MoveDirection.Right:
                 if (delta.x > 0)
                 {
-                    _transform.position = new Vector3(_transform.position.x + delta.x * MoveStepSize, _transform.position.y, _transform.position.z);
+                    newAxisPosition = _transform.position.x + delta.x * MoveStepSize;
+                    maxAxisPosition = _initialPosition.x + _maxDisplacement;
+                    if (newAxisPosition > maxAxisPosition)
+                        newAxisPosition = maxAxisPosition;
+
+                    _transform.position = new Vector3(newAxisPosition, _transform.position.y, _transform.position.z);
                     CurrentForce = delta.x * DragToForceFactor;
                 }
                 break;
             case MoveDirection.Up:
                 if (delta.y > 0)
                 {
-                    _transform.position = new Vector3(_transform.position.x, _transform.position.y, _transform.position.z + delta.y * MoveStepSize);
+                    newAxisPosition = _transform.position.z + delta.y * MoveStepSize;
+                    maxAxisPosition = _initialPosition.z + _maxDisplacement;
+                    if (newAxisPosition > maxAxisPosition)
+                        newAxisPosition = maxAxisPosition;
+
+                    _transform.position = new Vector3(_transform.position.x, _transform.position.y, newAxisPosition);
                     CurrentForce = delta.y * DragToForceFactor;
                 }
                 break;
             case MoveDirection.Down:
                 if (delta.y < 0)
                 {
-                    _transform.position = new Vector3(_transform.position.x, _transform.position.y, _transform.position.z + delta.y * MoveStepSize);
+                    newAxisPosition = _transform.position.z + delta.y * MoveStepSize;
+                    maxAxisPosition = _initialPosition.z - _maxDisplacement;
+                    if (newAxisPosition < maxAxisPosition)
+                        newAxisPosition = maxAxisPosition;
+
+                    _transform.position = new Vector3(_transform.position.x, _transform.position.y, newAxisPosition);
                     CurrentForce = -delta.y * DragToForceFactor;
                 }
                 break;
